@@ -1,4 +1,8 @@
 import subprocess
+import time
+
+# Espera 10 segundos
+time.sleep(10)
 
 # Cria um arquivo de texto com "Bom dia"
 with open("mensagem.txt", "w") as file:
