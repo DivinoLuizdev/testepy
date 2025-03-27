@@ -1,0 +1,43 @@
+# Arquivos de bytecode Python
+__pycache__/
+*.py[cod]
+
+# Ambientes virtuais
+.venv/
+venv/
+
+# Arquivos de log
+log/
+*.log
+
+# Arquivos de configuração e dados sensíveis
+*.ini
+*.json
+*.yaml
+*.yml
+*.db
+*.sqlite
+*.sqlite3
+
+# Arquivos temporários
+*.tmp
+*.swp
+*.bak
+
+# Arquivos de sistema operacional
+.DS_Store
+Thumbs.db
+
+# Pacotes e dependências
+*.egg-info/
+dist/
+build/
+
+# IDEs e editores de texto
+.idea/
+*.sublime-project
+*.sublime-workspace
+.vscode/
+
+# Outros arquivos específicos do projeto (adicione conforme necessário)
+mensagem.txt # Se você não quiser rastrear este arquivo

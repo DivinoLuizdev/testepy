@@ -2,13 +2,14 @@ import requests
 import json
 import subprocess
 import time
-from log import setup_logging  # Importa a configuração de logging do log.py
+from log import RobotLogger 
 
 # URL do Logstash
- 
+ROBO = 'testepy'
 
 # Configuração do logger usando log.py
-logger = setup_logging()
+robot_logger = RobotLogger(ROBO)
+logger = robot_logger.get_logger()
 
 try:
     logger.info("Starting the process: waiting for 10 seconds.")

@@ -1,50 +1,32 @@
 import logging
-import json
-import requests
+import os
+from datetime import datetime
 
-# Configuração do logger para enviar logs via HTTP
-def setup_logging():
-    logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
+class RobotLogger:
+    def __init__(self, robot_name):
+        self.robot_name = robot_name
+        
+        # Obtendo a data atual e formatando-a
+        current_date = datetime.now().strftime("%Y-%m-%d")
+        
+        # Diretório de log e nome do arquivo com a data
+        self.log_directory = f"C:\\RPA\\{self.robot_name}\\log"
+        self.log_filename = os.path.join(self.log_directory, f'{current_date}.txt')
 
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        # Criar diretório de log, se não existir
+        if not os.path.exists(self.log_directory):
+            os.makedirs(self.log_directory)
 
-    # Console handler
-    console_handler = logging.StreamHandler()
-    console_handler.setFormatter(formatter)
-    logger.addHandler(console_handler)
+        # Configurando o logging para o robô específico
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+            handlers=[
+                logging.FileHandler(self.log_filename),  # Log em arquivo com data
+                logging.StreamHandler()  # Log no console
+            ]
+        )
+        self.logger = logging.getLogger(self.robot_name)
 
-    # HTTP handler for ELK
-    elk_url = "http://localhost:5044"  # URL do Logstash
-    http_handler = LoggingHTTPHandler(elk_url)
-    http_handler.setFormatter(formatter)
-    logger.addHandler(http_handler)
-
-    return logger
-
-class LoggingHTTPHandler(logging.Handler):
-    def __init__(self, elk_url):
-        super().__init__()
-        self.elk_url = elk_url
-
-    def emit(self, record):
-        try:
-            log_entry = self.format(record)
-            log_message = {
-                "level": record.levelname,
-                "message": record.getMessage(),
-                "timestamp": self.formatTime(record),
-                "logger": record.name,
-                "pathname": record.pathname,
-                "lineno": record.lineno,
-                "funcName": record.funcName
-            }
-            response = requests.post(
-                self.elk_url,
-                headers={"Content-Type": "application/json"},
-                data=json.dumps(log_message)
-            )
-            if response.status_code != 200:
-                print(f"Erro ao enviar log: {response.status_code}, {response.text}")
-        except Exception:
-            self.handleError(record)
+    def get_logger(self):
+        return self.logger
