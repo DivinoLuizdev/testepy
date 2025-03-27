@@ -22,7 +22,7 @@ class RobotLogger:
             level=logging.INFO,
             format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
             handlers=[
-                logging.FileHandler(self.log_filename),  # Log em arquivo com data
+                logging.FileHandler(self.log_filename, mode='w'),  # Log em arquivo com data, modo 'w' para sobrescrever
                 logging.StreamHandler()  # Log no console
             ]
         )
