@@ -9,7 +9,7 @@ ROBO = 'testepy'
 
 # Configuração do logger usando log.py
 robot_logger = RobotLogger(ROBO)
-logger = robot_logger.get_logger()
+logger = robot_logger.logger  # Acessando diretamente o logger
 
 try:
     logger.info("Starting the process: waiting for 10 seconds.")
