@@ -60,6 +60,7 @@ class RobotLogger:
         
         # Log de término da execução com as informações finais
         execution_info = {
+            "robot" :self.robot_name,
             "timestamp": datetime.now().isoformat(),
             "robot_name": self.robot_name,
             "execution_id": self.execution_id,
@@ -73,6 +74,7 @@ class RobotLogger:
     def log_message(self, level, message):
         """Método para logar mensagens personalizadas em formato JSON."""
         log_data = {
+            "robot" :self.robot_name,
             "timestamp": datetime.now().isoformat(),
             "level": level,
             "robot_name": self.robot_name,
