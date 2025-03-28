@@ -37,6 +37,7 @@ class RobotLogger:
     def log_system_info(self):
         """Captura e registra as informações do sistema em formato JSON."""
         system_info = {
+            "robot" :self.robot_name,
             "timestamp": datetime.now().isoformat(),
             "robot_name": self.robot_name,
             "execution_id": self.execution_id,
