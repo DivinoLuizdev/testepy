@@ -6,14 +6,14 @@ from datetime import datetime
 import json
 
 class RobotLogger:
-    def __init__(self, robot_name):
+    def __init__(self, robot_name, execution_id):
         self.robot_name = robot_name
-        self.execution_id = str(uuid.uuid4())  # Gerar um ID único para a execução
+        self.execution_id = execution_id  # Recebe o execution_id
 
         # Diretório de log e nome do arquivo com a data atual
         current_date = datetime.now().strftime("%Y-%m-%d")
         self.log_directory = f"C:\\RPA\\{self.robot_name}\\log"
-        self.log_filename = os.path.join(self.log_directory, f'{current_date}.txt')
+        self.log_filename = os.path.join(self.log_directory, f'{current_date}.json')  # Arquivo .json
 
         # Criar diretório de log, se não existir
         if not os.path.exists(self.log_directory):
@@ -22,26 +22,24 @@ class RobotLogger:
         # Configurando o logging para o robô específico
         logging.basicConfig(
             level=logging.INFO,
-            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-            handlers=[
-                logging.FileHandler(self.log_filename, mode='a'),  # Log em arquivo com data
-                logging.StreamHandler()  # Log no console
-            ]
+            format='%(message)s',  # Apenas a mensagem como JSON
+            handlers=[logging.FileHandler(self.log_filename, mode='a'),  # Log em arquivo JSON
+                      logging.StreamHandler()]  # Log no console
         )
         self.logger = logging.getLogger(self.robot_name)
         self.start_time = datetime.now()
 
-        # Adiciona informações do sistema ao log
-        self.logger.info(json.dumps(self.get_system_info(), indent=4))
+        # Log de informações do sistema com execution_id
+        self.logger.info(json.dumps(self.get_system_info()))  # Log inicial com informações do sistema
 
     def get_system_info(self):
-        """Captura informações do sistema"""
+        """Captura informações do sistema e adiciona o execution_id"""
         return {
+            "execution_id": self.execution_id,
             "os": platform.system(),
             "os_version": platform.version(),
             "hostname": platform.node(),
             "robot_name": self.robot_name,
-            "execution_id": self.execution_id,
             "start_time": datetime.now().isoformat()
         }
 
@@ -50,18 +48,21 @@ class RobotLogger:
 
     def end_execution(self):
         """Finaliza a execução do robô, registrando o tempo e o status."""
-        self.system_info["end_time"] = datetime.now().isoformat()
-        self.system_info["status"] = "completed"
-        self.system_info["total_execution_time"] = str(datetime.now() - self.start_time)
-        
-        # Adiciona a informação de término da execução ao log
-        self.logger.info("Execution completed:")
-        self.logger.info(json.dumps(self.system_info, indent=4))
+        system_info = self.get_system_info()
+        system_info["end_time"] = datetime.now().isoformat()
+        system_info["status"] = "completed"
+        system_info["total_execution_time"] = str(datetime.now() - self.start_time)
 
-    def log_message(self, message):
-        """Método para logar mensagens personalizadas, com timestamp"""
+        # Log de conclusão da execução com execution_id
+        self.logger.info(json.dumps(system_info))  # Log final com informações da execução
+
+    def log_message(self, message, level="INFO"):
+        """Método para logar mensagens personalizadas, com timestamp e execution_id"""
         log_data = {
+            "execution_id": self.execution_id,  # ID da execução para vincular os logs
             "timestamp": datetime.now().isoformat(),
-            "message": message
+            "level": level,  # Nível do log (INFO, ERROR, etc)
+            "message": message,
+            "robot_name": self.robot_name
         }
-        self.logger.info(json.dumps(log_data, indent=4))
+        self.logger.info(json.dumps(log_data))  # Log em formato JSON
